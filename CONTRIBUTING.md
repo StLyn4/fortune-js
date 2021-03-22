@@ -32,6 +32,12 @@ To install the project you need to have `node` and `yarn` (can be replaced by NP
     npm install
     ```
 
+3. Oh yeah, just remembered. Install husky. He, as a faithful dog, will ensure that you commit only a good code 🐶:
+
+    ```sh
+    yarn husky install
+    ```
+
 > Tip: Keep your `master` branch pointing at the original repository and make
 > pull requests from branches on your fork. To do this, run:
 >
