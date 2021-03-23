@@ -1,8 +1,16 @@
 {
   "name": "fortune-js",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "The library that generates random numbers by 3 ways! Cryptographically strong Fortune? Fast XorShift+? Or maybe something mean? Fast and reliable Mersenne Twister? The choice is yours!",
   "main": "dist/main.js",
+  "keywords": [
+    "js",
+    "random",
+    "fortune",
+    "mt",
+    "mersenne-twister",
+    "xorshift"
+  ],
   "repository": "https://github.com/StLyn4/fortune-js.git",
   "author": "Vsevolod Volkov <st.lyn4@gmail.com>",
   "scripts": {
