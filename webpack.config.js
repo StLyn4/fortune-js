@@ -7,6 +7,10 @@ module.exports = {
   output: {
     path: path.join(__dirname, 'dist'),
     filename: 'main.js',
+    library: 'random',
+    libraryTarget: 'umd',
+    globalObject: 'this',
+    umdNamedDefine: true,
   },
   mode: 'production',
   plugins: [new webpack.ProgressPlugin()],
@@ -18,6 +22,7 @@ module.exports = {
         test: /\.(js|jsx)$/,
         include: [path.resolve(__dirname, 'src')],
         loader: 'babel-loader',
+        exclude: /node_modules/,
       },
     ],
   },

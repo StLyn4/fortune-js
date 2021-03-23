@@ -1,6 +1,6 @@
 <h1 align="center">Welcome to Fortune-JS 👋</h1>
 <p>
-  <img alt="Version" src="https://img.shields.io/badge/version-1.0.3-blue.svg?cacheSeconds=2592000" />
+  <img alt="Version" src="https://img.shields.io/badge/version-1.0.4-blue.svg?cacheSeconds=2592000" />
   <a href="LICENSE" target="_blank">
     <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg" />
   </a>
@@ -19,7 +19,7 @@ npm install fortune-js
 ## Usage
 
 ```javascript
-const random = require('random-js');
+const random = require('fortune-js').default;
 
 // In reality, you will most likely need only one type generator
 const Fortune = random('Fortune') // Or just random()
