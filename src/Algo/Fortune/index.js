@@ -9,6 +9,14 @@ const MIN_POOL_SIZE = 64;
 const RESEED_INTERVAL = 100; // ms
 
 class Fortune extends RandomBase {
+  static async create(seeds, cacheSize = 100000) {
+    const F = new Fortune(seeds, cacheSize);
+    await Promise.all(
+      seeds.map(async (seed, poolIndex) => await F.feed(poolIndex, seed)),
+    );
+    return F;
+  }
+
   _reseedCount = 0;
   _lastReseed = null;
 
@@ -30,8 +38,6 @@ class Fortune extends RandomBase {
     this._bytesCache = new Cache(cacheSize, (size) =>
       this._generator.randomBytes(size),
     );
-
-    seeds.map((seed, poolIndex) => this.feed(poolIndex, seed));
   }
 
   _choosePools = () => {
@@ -48,21 +54,21 @@ class Fortune extends RandomBase {
     return pools;
   };
 
-  _reseed = (time = Date.now()) => {
+  _reseed = async (time = Date.now()) => {
     this._reseedCount++;
     const pools = this._choosePools();
     const seed = Array(pools.length);
 
     for (let i = 0; i < pools.length; i++) {
-      seed[i] = pools[i].digest();
+      seed[i] = await pools[i].digest();
       pools[i].reset();
     }
 
     this._lastReseed = time;
-    this._generator.reseed(Buffer.concat(seed));
+    await this._generator.reseed(Buffer.concat(seed));
   };
 
-  _random = (size) => {
+  _random = async (size) => {
     const time = Date.now();
 
     if (this._lastReseed !== null && this._lastReseed > time) {
@@ -74,23 +80,32 @@ class Fortune extends RandomBase {
       this._pools[0].length >= MIN_POOL_SIZE &&
       (this._lastReseed === null || time > this._lastReseed + RESEED_INTERVAL)
     ) {
-      this._reseed(time);
+      await this._reseed(time);
       this._bytesCache.clear();
     }
 
     if (this._cacheSize < size) {
-      return this._generator.randomBytes(size);
+      const bytes = this._generator.randomBytes(size);
+      return bytes;
     } else {
       return this._bytesCache.get(size);
     }
   };
 
-  feed = (poolIndex, bytes) => {
-    this._pools[poolIndex].update(bytes).update(new SHAd256(bytes).digest());
+  feed = async (poolIndex, bytes) => {
+    this._pools[poolIndex]
+      .update(bytes)
+      .update(await new SHAd256(bytes).digest());
   };
 
-  random = () => {
-    return this._random(4).readUInt32BE() / 0xffffffff;
+  randomBytes = async (size) => {
+    const bytes = await this._random(size);
+    return bytes;
+  };
+
+  random = async () => {
+    const bytes = await this._random(4);
+    return bytes.readUInt32BE() / 0xffffffff;
   };
 }
 

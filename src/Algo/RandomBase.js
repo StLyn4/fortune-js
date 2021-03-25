@@ -1,27 +1,31 @@
 const DEFAULT_LIMIT = 0xffffffff - 1;
 
 class RandomBase {
-  random = () => {
+  random = async () => {
     throw new TypeError('It is forbidden to use RandomBase directly');
   };
 
-  randInt = (limit = DEFAULT_LIMIT) => {
-    return Math.round(limit * this.random());
+  randInt = async (limit = DEFAULT_LIMIT) => {
+    const randVal = await this.random();
+    return Math.round(limit * randVal);
   };
 
-  randFloat = (limit = DEFAULT_LIMIT) => {
-    return limit * this.random();
+  randFloat = async (limit = DEFAULT_LIMIT) => {
+    const randVal = await this.random();
+    return limit * randVal;
   };
 
-  randRange = (from = 0, to = DEFAULT_LIMIT) => {
-    return Math.round((to - from) * this.random() + from);
+  randRange = async (from = 0, to = DEFAULT_LIMIT) => {
+    const randVal = await this.random();
+    return Math.round((to - from) * randVal + from);
   };
 
-  randFloatRange = (from = 0, to = DEFAULT_LIMIT) => {
-    return (to - from) * this.random() + from;
+  randFloatRange = async (from = 0, to = DEFAULT_LIMIT) => {
+    const randVal = await this.random();
+    return (to - from) * randVal + from;
   };
 
-  select = (array, n = 1) => {
+  select = async (array, n = 1) => {
     if (n > array.length) {
       throw new Error(
         'It is impossible to choose more elements than the number of array elements',
@@ -34,7 +38,7 @@ class RandomBase {
 
     for (let i = 0; i < n; i++) {
       while (selectedIndex === -1 || selected.has(selectedIndex)) {
-        selectedIndex = this.randInt(array.length - 1);
+        selectedIndex = await this.randInt(array.length - 1);
       }
       ret[i] = array[selectedIndex];
       selected.add(selectedIndex);
@@ -43,13 +47,13 @@ class RandomBase {
     return ret;
   };
 
-  shuffle = (array, copy = false) => {
+  shuffle = async (array, copy = false) => {
     if (copy) {
       array = array.slice();
     }
 
     for (let i = array.length - 1, j, tmp; i > 0; i--) {
-      j = this.randInt(i);
+      j = await this.randInt(i);
       tmp = array[i];
       array[i] = array[j];
       array[j] = tmp;

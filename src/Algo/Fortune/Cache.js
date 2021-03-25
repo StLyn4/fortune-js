@@ -7,13 +7,13 @@ class Cache {
     this._pos = cacheSize; // END
   }
 
-  _reGen() {
-    this._data = this._generator(this._size);
+  _reGen = async () => {
+    this._data = await this._generator(this._size);
     this._pos = 0;
     this._free = this._data.length;
-  }
+  };
 
-  _read(size = this._free) {
+  _read = (size = this._free) => {
     if (size > this._free) {
       throw new Error('It is impossible to read more than saved');
     }
@@ -23,21 +23,24 @@ class Cache {
     this._free -= size;
 
     return data;
-  }
+  };
 
-  clear() {
+  clear = () => {
     this._free = 0;
-  }
+  };
 
-  get(size) {
+  get = async (size) => {
     if (this._free === 0) {
-      this._reGen();
+      await this._reGen();
     }
     if (this._free < size) {
-      return Buffer.concat([this._read(), this._generator(size - this._free)]);
+      return Buffer.concat([
+        this._read(),
+        await this._generator(size - this._free),
+      ]);
     }
     return this._read(size);
-  }
+  };
 }
 
 export default Cache;

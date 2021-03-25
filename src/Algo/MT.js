@@ -1,6 +1,10 @@
 import RandomBase from './RandomBase';
 
 class MersenneTwister extends RandomBase {
+  static async create(seed, regSize = 624, period = 397) {
+    return new MersenneTwister(seed, regSize, period);
+  }
+
   constructor(seed, regSize = 624, period = 397) {
     if (seed === undefined || seed > 0xffffffff) {
       throw new TypeError('seed must be a 32-bit integer');
@@ -49,7 +53,7 @@ class MersenneTwister extends RandomBase {
     return y;
   };
 
-  random = () => {
+  random = async () => {
     return (this._random() + 0x7fffffff) / 0xffffffff;
   };
 }

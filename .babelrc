@@ -1,7 +1,19 @@
 {
   "plugins": [
     "syntax-dynamic-import",
-    "@babel/plugin-proposal-class-properties"
+    "@babel/plugin-transform-runtime",
+    "@babel/plugin-proposal-class-properties",
+    "@babel/plugin-syntax-top-level-await",
+    [
+      "module-resolver",
+      {
+        "root": ["."],
+        "alias": {
+          "app": "./src",
+          "@": "./src/utils",
+        },
+      },
+    ],
   ],
   "presets": [
     [

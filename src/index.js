@@ -1,18 +1,13 @@
-import crypto from 'crypto';
+import { randomBytes, randomInt } from '@/initialRandom';
 
 import XorShift from './Algo/XorShift+';
-import MT from './Algo/MT';
+import MersenneTwister from './Algo/MT';
 import Fortune from './Algo/Fortune';
 
 const randomizers = {
-  XorShift: new XorShift([
-    crypto.randomBytes(4).readUInt32BE(),
-    crypto.randomBytes(4).readUInt32BE(),
-    crypto.randomBytes(4).readUInt32BE(),
-    crypto.randomBytes(4).readUInt32BE(),
-  ]),
-  MT: new MT(crypto.randomBytes(4).readUInt32BE()),
-  Fortune: new Fortune([crypto.randomBytes(32)]),
+  XorShift: await XorShift.create(randomBytes(16)),
+  MersenneTwister: await MersenneTwister.create(randomInt()),
+  Fortune: await Fortune.create([randomBytes(32)]),
 };
 
 const random = (algorithm = 'Fortune') => {
@@ -22,4 +17,7 @@ const random = (algorithm = 'Fortune') => {
   return randomizers[algorithm];
 };
 
+const FurtuneRandomBytes = randomizers.Fortune.randomBytes;
+
+export { FurtuneRandomBytes as randomBytes };
 export default random;

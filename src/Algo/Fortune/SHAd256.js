@@ -1,16 +1,15 @@
-import crypto from 'crypto';
+import SHA256 from '@/SHA256';
 
 class SHAd256 {
   constructor(data = '') {
-    this.hash = crypto.createHash('sha256');
+    this.hash = new SHA256(data);
     this.hash.update(data);
   }
 
-  digest = (encoding = null) => {
-    return crypto
-      .createHash('sha256')
-      .update(this.hash.digest())
-      .digest(encoding);
+  digest = async () => {
+    const inner = await this.hash.digest();
+    const outter = await new SHA256(inner).digest();
+    return outter;
   };
 
   update(data = '') {
@@ -19,7 +18,7 @@ class SHAd256 {
   }
 
   reset() {
-    this.hash = crypto.createHash('sha256');
+    this.hash = new SHA256();
     return this;
   }
 }
