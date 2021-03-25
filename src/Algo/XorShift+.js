@@ -1,17 +1,23 @@
 import RandomBase from './RandomBase';
 
 class XorShift extends RandomBase {
+  static async create(seed) {
+    return new XorShift(seed);
+  }
+
   constructor(seed) {
-    if (!Array.isArray(seed) || seed.length !== 4) {
-      throw new TypeError('seed must be an array with 4 numbers');
+    if (seed.byteLength !== 16) {
+      throw new TypeError(
+        'seed must be a Buffer instance with a size of 16 bytes',
+      );
     }
     super();
 
     // uint64_t s = [seed ...]
-    this._state0U = seed[0] | 0;
-    this._state0L = seed[1] | 0;
-    this._state1U = seed[2] | 0;
-    this._state1L = seed[3] | 0;
+    this._state0U = seed.readInt32BE(0);
+    this._state0L = seed.readInt32BE(4);
+    this._state1U = seed.readInt32BE(8);
+    this._state1L = seed.readInt32BE(12);
   }
 
   _random = () => {
@@ -77,7 +83,7 @@ class XorShift extends RandomBase {
     return [resU, resL];
   };
 
-  random = () => {
+  random = async () => {
     const [rInt1, rInt2] = this._random();
     // Math.pow(2, -32) = 2.3283064365386963e-10
     // Math.pow(2, -52) = 2.220446049250313e-16

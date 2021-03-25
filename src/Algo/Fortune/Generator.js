@@ -1,5 +1,5 @@
-import crypto from 'crypto';
-
+import encrypt from '@/encryptor';
+import incrementBuffer from '@/incrementBuffer';
 import SHAd256 from './SHAd256';
 
 const KEY_SIZE = 32;
@@ -9,27 +9,27 @@ const EMPTY_KEY_BLOCK = Buffer.alloc(KEY_SIZE);
 
 class Generator {
   _key = null;
-  _iv = new BigUint64Array(2); // counter (+1 on each _encrypt)
+  _iv = Buffer.alloc(16); // counter (+1 on each _encrypt)
 
-  _randomBytesBlock = (encBlock) => {
-    this.reseed(this._encrypt(EMPTY_KEY_BLOCK));
-    return this._encrypt(encBlock);
+  _randomBytesBlock = async (encBlock) => {
+    this.reseed(await this._encrypt(EMPTY_KEY_BLOCK));
+    const block = await this._encrypt(encBlock);
+    return block;
   };
 
-  _encrypt = (data) => {
-    const cipher = crypto.createCipheriv('aes-256-ctr', this._key, this._iv);
-    const ret = Buffer.concat([cipher.update(data), cipher.final()]);
-    this._iv[1]++;
+  _encrypt = async (data) => {
+    const ret = await encrypt(data, this._key, this._iv);
+    incrementBuffer(this._iv);
     return ret;
   };
 
-  reseed = (seed) => {
-    this._key = new SHAd256(
+  reseed = async (seed) => {
+    this._key = await new SHAd256(
       Buffer.concat([this._key ?? EMPTY_KEY_BLOCK, seed]),
     ).digest();
   };
 
-  randomBytes = (size) => {
+  randomBytes = async (size) => {
     if (this._key === null) {
       throw new Error(
         'The generator must be seeded at least with 32 bytes of information in the first pool.',
@@ -41,10 +41,9 @@ class Generator {
     const buf = Array(fullBlocks + 1);
 
     for (let i = 0; i < fullBlocks; i++) {
-      buf[i] = this._randomBytesBlock(EMPTY_BLOCK);
+      buf[i] = await this._randomBytesBlock(EMPTY_BLOCK);
     }
-    buf[fullBlocks] = this._randomBytesBlock(Buffer.alloc(remainder));
-    // console.log(this._iv);
+    buf[fullBlocks] = await this._randomBytesBlock(Buffer.alloc(remainder));
     return Buffer.concat(buf);
   };
 }
