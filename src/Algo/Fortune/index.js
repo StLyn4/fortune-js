@@ -11,33 +11,36 @@ const RESEED_INTERVAL = 100; // ms
 class Fortune extends RandomBase {
   static async create(seeds, cacheSize = 100000) {
     const F = new Fortune(seeds, cacheSize);
+
+    F._generator = await Generator.create();
+
+    F._pools = Array(POOLS_COUNT);
+    for (let i = 0; i < POOLS_COUNT; i++) {
+      F._pools[i] = await Pool.create();
+    }
+
+    F._cacheSize = cacheSize;
+    F._bytesCache = new Cache(cacheSize, (size) =>
+      F._generator.randomBytes(size),
+    );
+
     await Promise.all(
       seeds.map(async (seed, poolIndex) => await F.feed(poolIndex, seed)),
     );
+
     return F;
   }
 
   _reseedCount = 0;
   _lastReseed = null;
 
-  constructor(seeds, cacheSize = 100000) {
+  constructor(seeds) {
     if (!Array.isArray(seeds) || seeds.length === 0 || seeds.length > 32) {
       throw new TypeError(
         'seed must be an array with the number of elements from 1 to 32',
       );
     }
     super();
-
-    this._generator = new Generator();
-    this._pools = Array(POOLS_COUNT);
-    for (let i = 0; i < POOLS_COUNT; i++) {
-      this._pools[i] = new Pool();
-    }
-
-    this._cacheSize = cacheSize;
-    this._bytesCache = new Cache(cacheSize, (size) =>
-      this._generator.randomBytes(size),
-    );
   }
 
   _choosePools = () => {
@@ -98,7 +101,7 @@ class Fortune extends RandomBase {
       .update(await new SHAd256(bytes).digest());
   };
 
-  randomBytes = async (size) => {
+  randomBytes = async (size = 0) => {
     const bytes = await this._random(size);
     return bytes;
   };

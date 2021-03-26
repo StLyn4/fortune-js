@@ -1,6 +1,6 @@
 <h1 align="center">Welcome to Fortune-JS 👋</h1>
 <p>
-  <img alt="Version" src="https://img.shields.io/badge/version-2.0.0-blue.svg?cacheSeconds=2592000" />
+  <img alt="Version" src="https://img.shields.io/badge/version-2.1.0-blue.svg?cacheSeconds=2592000" />
   <a href="LICENSE" target="_blank">
     <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg" />
   </a>
@@ -26,7 +26,7 @@ import random from 'fortune-js';
 async function main() {
   // In reality, you will most likely need only one type generator
   const Fortune = await random('Fortune'); // Or just random()
-  const MT = await random('MT');
+  const MersenneTwister = await random('MersenneTwister');
   const XorShift = await random('XorShift');
 
   console.log(await Fortune.random()); // Prints a random number from 0 to 1
@@ -45,6 +45,22 @@ This is a native crypto library, like `crypto` in Node.js.
 If you want to use the synchronous version of the library, then look at version `1.x.x`.
 But note that it is supported only in Node.js.
 
+## For browsers
+
+If you want to use this library in the browser, simply add the next element to the `<header>`:
+
+```html
+<script src="https://unpkg.com/fortune-js@latest/dist/main.min.js"></script>
+```
+
+And write in your script the following:
+
+```javascript
+const random = window.FortuneJS.default;
+
+// And then everything is as in the example above
+```
+
 ## Where does the library work? Everywhere.
 
 Node.js and browsers use native versions of some internal functions, which allows the library work very quickly.
@@ -57,7 +73,7 @@ In any other environment that does not have a support for node.js Crypto, nor We
 **1.** If you need cryptographic strong random, fast work (in fact, all 3 algorithms are very fast),
 then your choice is `Fortune` (this algorithm even uses by Apple since 2019).
 
-**2.** If you need a faster job, with still a very random selection, you can use the `Mersenne Twister` (`MT`).
+**2.** If you need a faster job, with still a very random selection, you can use the `MersenneTwister`.
 
 **3.** `XorShift` also shows even higher speed, but not recommended for use, since there are more interesting algorithms.
 

@@ -1,6 +1,16 @@
-import SHA256 from '@/SHA256';
+import loadSHA256 from '@/SHA256';
+
+let SHA256 = null;
 
 class SHAd256 {
+  static async create(data = '') {
+    if (SHA256 === null) {
+      const SHA256Module = await loadSHA256();
+      SHA256 = SHA256Module.SHA256;
+    }
+    return new SHAd256(data);
+  }
+
   constructor(data = '') {
     this.hash = new SHA256(data);
     this.hash.update(data);
@@ -12,15 +22,15 @@ class SHAd256 {
     return outter;
   };
 
-  update(data = '') {
+  update = (data = '') => {
     this.hash.update(data);
     return this;
-  }
+  };
 
-  reset() {
+  reset = () => {
     this.hash = new SHA256();
     return this;
-  }
+  };
 }
 
 export default SHAd256;

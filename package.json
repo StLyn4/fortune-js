@@ -1,6 +1,6 @@
 {
   "name": "fortune-js",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "The library that generates random numbers by 3 ways! Cryptographically strong Fortune? Fast XorShift+? Or maybe something mean? Fast and reliable Mersenne Twister? The choice is yours!",
   "main": "dist/main.min.js",
   "keywords": [
@@ -30,7 +30,6 @@
     "@babel/core": "^7.13.8",
     "@babel/eslint-parser": "^7.13.8",
     "@babel/plugin-proposal-class-properties": "^7.13.0",
-    "@babel/plugin-syntax-top-level-await": "^7.12.13",
     "@babel/plugin-transform-runtime": "^7.13.10",
     "@babel/preset-env": "^7.13.9",
     "@webpack-cli/init": "^1.1.3",

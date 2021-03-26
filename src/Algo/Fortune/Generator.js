@@ -1,4 +1,4 @@
-import encrypt from '@/encryptor';
+import loadEncrypt from '@/encryptor';
 import incrementBuffer from '@/incrementBuffer';
 import SHAd256 from './SHAd256';
 
@@ -7,9 +7,19 @@ const REKEY_LIMIT = 0x10000;
 const EMPTY_BLOCK = Buffer.alloc(REKEY_LIMIT);
 const EMPTY_KEY_BLOCK = Buffer.alloc(KEY_SIZE);
 
+let encrypt = null;
+
 class Generator {
+  static async create() {
+    if (encrypt === null) {
+      const encryptorModule = await loadEncrypt();
+      encrypt = encryptorModule.encrypt;
+    }
+    return new Generator();
+  }
+
   _key = null;
-  _iv = Buffer.alloc(16); // counter (+1 on each _encrypt)
+  _iv = Buffer.alloc(16); // counter (+1 on each _encrypt
 
   _randomBytesBlock = async (encBlock) => {
     this.reseed(await this._encrypt(EMPTY_KEY_BLOCK));
