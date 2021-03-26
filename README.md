@@ -1,6 +1,6 @@
 <h1 align="center">Welcome to Fortune-JS 👋</h1>
 <p>
-  <img alt="Version" src="https://img.shields.io/badge/version-2.1.0-blue.svg?cacheSeconds=2592000" />
+  <img alt="Version" src="https://img.shields.io/badge/version-2.1.1-blue.svg?cacheSeconds=2592000" />
   <a href="LICENSE" target="_blank">
     <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg" />
   </a>
@@ -19,9 +19,9 @@ npm install fortune-js
 ## Usage
 
 ```javascript
-const random = require('fortune-js').default;
+const random = require('fortune-js');
 // or
-import random from 'fortune-js';
+// import random from 'fortune-js';
 
 async function main() {
   // In reality, you will most likely need only one type generator
@@ -56,7 +56,7 @@ If you want to use this library in the browser, simply add the next element to t
 And write in your script the following:
 
 ```javascript
-const random = window.FortuneJS.default;
+const random = window.FortuneJS;
 
 // And then everything is as in the example above
 ```

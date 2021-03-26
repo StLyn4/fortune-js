@@ -7,10 +7,13 @@ module.exports = {
     path: path.join(__dirname, 'dist'),
     filename: 'main.min.js',
     publicPath: '',
-    library: 'FortuneJS',
-    libraryTarget: 'umd',
+    library: {
+      name: 'FortuneJS',
+      type: 'umd',
+      export: 'default',
+      umdNamedDefine: true,
+    },
     globalObject: 'this',
-    umdNamedDefine: true,
   },
   resolve: {
     fallback: {

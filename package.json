@@ -1,6 +1,6 @@
 {
   "name": "fortune-js",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "The library that generates random numbers by 3 ways! Cryptographically strong Fortune? Fast XorShift+? Or maybe something mean? Fast and reliable Mersenne Twister? The choice is yours!",
   "main": "dist/main.min.js",
   "keywords": [
