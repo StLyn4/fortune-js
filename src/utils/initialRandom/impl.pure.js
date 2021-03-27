@@ -1,4 +1,4 @@
-const exportModule = async () => {
+const exportModule = () => {
   const randomBytes = (size = 0) => {
     const bytes = Buffer.allocUnsafe(size);
     for (let i = 0; i < size; i++) {

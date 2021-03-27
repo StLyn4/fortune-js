@@ -9,38 +9,31 @@ const MIN_POOL_SIZE = 64;
 const RESEED_INTERVAL = 100; // ms
 
 class Fortune extends RandomBase {
-  static async create(seeds, cacheSize = 100000) {
-    const F = new Fortune(seeds, cacheSize);
-
-    F._generator = await Generator.create();
-
-    F._pools = Array(POOLS_COUNT);
-    for (let i = 0; i < POOLS_COUNT; i++) {
-      F._pools[i] = await Pool.create();
-    }
-
-    F._cacheSize = cacheSize;
-    F._bytesCache = new Cache(cacheSize, (size) =>
-      F._generator.randomBytes(size),
-    );
-
-    await Promise.all(
-      seeds.map(async (seed, poolIndex) => await F.feed(poolIndex, seed)),
-    );
-
-    return F;
-  }
-
   _reseedCount = 0;
   _lastReseed = null;
+  _feedQueue = [];
 
-  constructor(seeds) {
+  constructor(seeds, cacheSize = 100000) {
     if (!Array.isArray(seeds) || seeds.length === 0 || seeds.length > 32) {
       throw new TypeError(
         'seed must be an array with the number of elements from 1 to 32',
       );
     }
     super();
+
+    this._generator = new Generator();
+
+    this._pools = Array(POOLS_COUNT);
+    for (let i = 0; i < POOLS_COUNT; i++) {
+      this._pools[i] = new Pool();
+    }
+
+    this._cacheSize = cacheSize;
+    this._bytesCache = new Cache(cacheSize, (size) =>
+      this._generator.randomBytes(size),
+    );
+
+    seeds.map((seed, poolIndex) => this.feed(poolIndex, seed));
   }
 
   _choosePools = () => {
@@ -72,6 +65,9 @@ class Fortune extends RandomBase {
   };
 
   _random = async (size) => {
+    await Promise.all(this._feedQueue);
+    this._feedQueue.length = 0;
+
     const time = Date.now();
 
     if (this._lastReseed !== null && this._lastReseed > time) {
@@ -95,10 +91,14 @@ class Fortune extends RandomBase {
     }
   };
 
-  feed = async (poolIndex, bytes) => {
+  _feed = async (poolIndex, bytes) => {
     this._pools[poolIndex]
       .update(bytes)
       .update(await new SHAd256(bytes).digest());
+  };
+
+  feed = (poolIndex, bytes) => {
+    this._feedQueue.push(this._feed(poolIndex, bytes));
   };
 
   randomBytes = async (size = 0) => {

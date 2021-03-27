@@ -1,5 +1,5 @@
-const exportModule = async () => {
-  const crypto = await import(/* webpackIgnore:true */ `crypto`);
+const exportModule = () => {
+  const crypto = eval('require("crypto")');  // eslint-disable-line
 
   const encrypt = async (data, key, counter) => {
     const cipher = crypto.createCipheriv('aes-256-ctr', key, counter);

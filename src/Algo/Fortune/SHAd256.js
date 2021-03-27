@@ -1,19 +1,8 @@
-import loadSHA256 from '@/SHA256';
-
-let SHA256 = null;
+import SHA256 from '@/SHA256';
 
 class SHAd256 {
-  static async create(data = '') {
-    if (SHA256 === null) {
-      const SHA256Module = await loadSHA256();
-      SHA256 = SHA256Module.SHA256;
-    }
-    return new SHAd256(data);
-  }
-
   constructor(data = '') {
     this.hash = new SHA256(data);
-    this.hash.update(data);
   }
 
   digest = async () => {

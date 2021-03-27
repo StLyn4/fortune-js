@@ -1,11 +1,8 @@
 import SHAd256 from './SHAd256';
 
 class Pool {
-  static async create() {
-    const pool = new Pool();
-    pool.hash = await SHAd256.create();
-    pool.reset();
-    return pool;
+  constructor() {
+    this.reset();
   }
 
   digest = () => this.hash.digest();
@@ -17,7 +14,7 @@ class Pool {
   };
 
   reset = () => {
-    this.hash.reset();
+    this.hash = new SHAd256();
     this.length = 0;
     return this;
   };

@@ -3,7 +3,7 @@
   (created by Chen, Yi-Cyuan [emn178@gmail.com], https://github.com/emn178/js-sha256)
 */
 
-const exportModule = async () => {
+const exportModule = () => {
   const EMPTY_BUFFER = Buffer.alloc(0);
   const EXTRA = [-2147483648, 8388608, 32768, 128];
   const SHIFT = [24, 16, 8, 0];

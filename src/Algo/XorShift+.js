@@ -1,10 +1,6 @@
 import RandomBase from './RandomBase';
 
 class XorShift extends RandomBase {
-  static async create(seed) {
-    return new XorShift(seed);
-  }
-
   constructor(seed) {
     if (seed.byteLength !== 16) {
       throw new TypeError(

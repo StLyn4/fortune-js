@@ -1,38 +1,23 @@
-import loadInitialRandom from '@/initialRandom';
+import { randomBytes, randomInt } from '@/initialRandom';
 
 import XorShift from './Algo/XorShift+';
 import MersenneTwister from './Algo/MT';
 import Fortune from './Algo/Fortune';
 
-const randomizerCreators = {
-  XorShift: async () => {
-    const { randomBytes } = await loadInitialRandom();
-    const rand = await XorShift.create(randomBytes(16));
-    return rand;
-  },
-  MersenneTwister: async () => {
-    const { randomInt } = await loadInitialRandom();
-    const rand = await MersenneTwister.create(randomInt());
-    return rand;
-  },
-  Fortune: async () => {
-    const { randomBytes } = await loadInitialRandom();
-    const rand = await Fortune.create([randomBytes(32)]);
-    return rand;
-  },
+const randomizers = {
+  XorShift: new XorShift(randomBytes(16)),
+  MersenneTwister: new MersenneTwister(randomInt()),
+  Fortune: new Fortune([randomBytes(32)]),
 };
 
-const initedRandomizers = {};
-
-const random = async (algorithm = 'Fortune') => {
-  if (initedRandomizers[algorithm]) {
-    return initedRandomizers[algorithm];
-  }
-  if (!Object.prototype.hasOwnProperty.call(randomizerCreators, algorithm)) {
+const random = (algorithm = 'MersenneTwister') => {
+  if (!Object.prototype.hasOwnProperty.call(randomizers, algorithm)) {
     throw new Error(`The Algorithm of Random "${algorithm}" does not exist`);
   }
-  const randomizer = await randomizerCreators[algorithm]();
-  return randomizer;
+  return randomizers[algorithm];
 };
 
+const FortuneRandomBytes = randomizers.Fortune.randomBytes;
+
 export default random;
+export { FortuneRandomBytes as randomBytes };

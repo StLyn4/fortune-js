@@ -1,4 +1,4 @@
-const exportModule = async () => {
+const exportModule = () => {
   const crypto = window.crypto;
   if (crypto === undefined || crypto.subtle === undefined) {
     throw new Error();

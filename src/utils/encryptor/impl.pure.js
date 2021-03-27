@@ -2,10 +2,9 @@
   This implementation is inspired the implementation of ASE-256-CTR encrypt in the aes-js library
   (https://github.com/ricmoo/aes-js)
 */
-
 import incrementBuffer from '@/incrementBuffer';
 
-const exportModule = async () => {
+const exportModule = () => {
   // prettier-ignore
   const R = [
     0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36,
@@ -228,7 +227,7 @@ const exportModule = async () => {
   ];
 
   const convertToInt32 = (bytes) => {
-    const result = new Int32Array(bytes.length);
+    const result = new Int32Array(bytes.length / 4);
     for (let i = 0; i < bytes.length; i += 4) {
       result[i >> 2] = bytes.readInt32BE(i);
     }
@@ -285,8 +284,7 @@ const exportModule = async () => {
         (S[(tt >> 8) & 0xff] << 16) ^
         (S[tt & 0xff] << 8) ^
         S[(tt >> 24) & 0xff] ^
-        (R[RPointer] << 24);
-      RPointer += 1;
+        (R[RPointer++] << 24);
 
       for (let i = 1; i < keyInts.length / 2; i++) {
         keyInts[i] ^= keyInts[i - 1];
@@ -316,9 +314,9 @@ const exportModule = async () => {
 
     for (let i = 0; i < encrypted.length; i++) {
       if (remainingCounterIndex === 16) {
-        const a = Buffer.alloc(4);
+        const a = [0, 0, 0, 0];
 
-        // convert plaintext to (ints ^ key)
+        // convert data to (ints ^ key)
         let dataInts = convertToInt32(counter);
         for (let i = 0; i < 4; i++) {
           dataInts[i] ^= KE[0][i];
@@ -334,7 +332,7 @@ const exportModule = async () => {
               T[3][dataInts[(i + 3) % 4] & 0xff] ^
               KE[r][i];
           }
-          dataInts = Buffer.from(a); // copy
+          dataInts = new Int32Array(a); // copy
         }
 
         // the last round is special
